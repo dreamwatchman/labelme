@@ -1520,7 +1520,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.imagePath = filename
             self.labelFile = None
         image = QtGui.QImage.fromData(self.imageData)
-
+        # for TIFF 16Bits
+        if image.format() == QtGui.QImage.Format_Grayscale16:
+            image = image.convertToFormat(QtGui.QImage.Format_RGB32)
+            buf = QtCore.QBuffer()
+            image.save(buf,"JPEG")
+            self.imageData = buf.data()
         if image.isNull():
             formats = [
                 "*.{}".format(fmt.data().decode())
